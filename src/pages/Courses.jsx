@@ -1,45 +1,69 @@
-import { useEffect, useState } from "react";
-import { getCoursesFromFirestore } from "../api/coursesApi"; // Importa la función para obtener los cursos desde Firestore
+import React, { useEffect, useState } from "react";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
+import CardActionArea from "@mui/material/CardActionArea";
+import CardActions from "@mui/material/CardActions";
+import Grid from "@mui/material/Grid";
+import { getCoursesFromFirestore } from "../api/coursesApi";
+
+const CourseCard = ({ course }) => {
+  return (
+    <Grid item lg={6} >
+      <Card sx={{ maxWidth: 500 }}>
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            height="140"
+            image={course.image}
+            alt={course.title}
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              {course.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {course.description}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        <CardActions>
+          <Button size="small" color="primary">
+            <Link href={course.url} underline="none" color="inherit">
+              {course.url}
+            </Link>
+          </Button>
+        </CardActions>
+      </Card>
+    </Grid>
+  );
+};
 
 const Courses = () => {
-  const [courses, setCourses] = useState([]); // Estado para almacenar los cursos obtenidos desde Firestore
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const coursesData = await getCoursesFromFirestore(); // Obtiene los cursos desde Firestore
-      // Convierte la marca de tiempo "create" a formato de fecha
+      const coursesData = await getCoursesFromFirestore();
       const formattedCourses = coursesData.map((course) => ({
         ...course,
         create: course.create.toDate(),
       }));
-      setCourses(formattedCourses); // Actualiza el estado con los cursos obtenidos
+      setCourses(formattedCourses);
     };
 
-    fetchCourses(); // Ejecuta la función para obtener los cursos al montar el componente
+    fetchCourses();
   }, []);
 
   return (
-    <div>
-      <h1>Courses</h1>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.id}>
-            <h2>{course.title}</h2> {/* Título del curso */}
-            <p style={{ textAlign: "justify" }}>
-              Description: {course.description}
-            </p>
-            {/* Descripción del curso */}
-            <p>Instructor: {course.instructor}</p> {/* Instructor del curso */}
-            <p>Created: {new Date(course.create).toLocaleString()}</p>{" "}
-            {/* Fecha de creación del curso */}
-            <p>
-              URL: <a href={course.url}>{course.url}</a>
-            </p>{" "}
-            {/* URL del curso */}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Grid container spacing={2}>
+      {courses.map((course) => (
+        <CourseCard key={course.id} course={course} />
+      ))}
+    </Grid>
   );
 };
 
