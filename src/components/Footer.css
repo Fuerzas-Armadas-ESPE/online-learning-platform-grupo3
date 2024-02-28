@@ -1,0 +1,12 @@
+/* Footer.css */
+
+/* Estilos para el pie de página */
+.footer {
+  background-color: #63d5e9;
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-link {
+  margin: 0 10px;
+}
